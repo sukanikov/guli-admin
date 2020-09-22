@@ -37,7 +37,7 @@ export const constantRouterMap = [
     }]
   },
 
-  // 讲师管理
+  // 讲师的管理
   {
     path: '/teacher',
     component: Layout,
