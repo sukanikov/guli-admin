@@ -49,13 +49,13 @@ export const constantRouterMap = [
         path: 'list',
         name: 'TeacherList',
         component: () => import('@/views/teacher/list'),
-        meta: { title: '讲师列表', icon: 'eye' }
+        meta: { title: '讲师列表', icon: 'guide' }
       },
       {
         path: 'create',
         name: 'TeacherCreate',
         component: () => import('@/views/teacher/form'),
-        meta: { title: '添加讲师', icon: 'qq' }
+        meta: { title: '添加讲师', icon: 'guide' }
       },
       {
         path: 'edit/:id',
@@ -63,6 +63,28 @@ export const constantRouterMap = [
         component: () => import('@/views/teacher/form'),
         meta: { title: '编辑讲师' },
         hidden: true
+      }
+    ]
+  },
+  // 课程管理
+  {
+    path: '/course',
+    component: Layout,
+    redirect: '/course/list',
+    name: 'Course',
+    meta: { title: '课程管理' },
+    children: [
+      {
+        path: 'list',
+        name: 'CourseList',
+        component: () => import('@/views/course/list'),
+        meta: { title: '课程列表', icon: 'guide' }
+      },
+      {
+        path: 'form',
+        name: 'CourseForm',
+        component: () => import('@/views/course/form'),
+        meta: { title: '新增课程', icon: 'guide' }
       }
     ]
   },

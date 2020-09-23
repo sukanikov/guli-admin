@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="axios.min.js"></script>
+    <script src="vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <button @click="getTeacherList()">访问</button>
+
+        <table>
+            <tr v-for="item in teacherList">
+                <td>{{item.id}}</td>
+                <td>{{item.name}}</td>
+            </tr>
+        </table>
+    </div>
+</body>
+<script>
+
+    new Vue({
+        el: '#app',
+        data: {
+            teacherList: []
+        },
+        created() {
+            this.getTeacherList()
+        },
+        methods: {
+            //1.初始化axios基本环境，返回一个函数引用
+            initRequest() {
+                return axios.create({
+                    baseURL: 'http://localhost:8110',
+                    timeout: 5000
+                })
+            },
+
+            //2.api调用层
+            teacherApi() {
+                let request = this.initRequest()
+                return request({
+                    url: '/admin/edu/teacher/list',
+                    method: 'get'
+                })
+            },
+
+            //3.数据绑定层
+            getTeacherList(){
+                this.teacherApi().then(response =>{
+                    console.log(response)
+                    this.teacherList = response.data.data.items
+                }).catch(error=>{
+                    console.log(error)
+                })
+            }
+
+            // getTeacherList() {
+            //     axios.get('http://localhost:8110/admin/edu/teacher/list').then(response => {
+            //         console.log(response)
+            //         this.teacherList = response.data.data.items
+            //     }).catch(error => {
+            //         //失败
+            //         console.log(error)
+            //     })
+            // }
+        }
+    })
+</script>
+
+</html>
