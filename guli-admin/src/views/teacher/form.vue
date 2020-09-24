@@ -27,7 +27,18 @@
       <el-form-item label="讲师资历">
         <el-input v-model="teacher.career" :rows="10" type="textarea"/>
       </el-form-item>
-      <!-- 讲师头像：TODO -->
+      <!-- 讲师头像 -->
+      <el-form-item label="讲师头像">
+        <el-upload
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+          class="avatar-uploader"
+          action="http://localhost:8120/admin/oss/file/upload?module=avatar">
+          <img v-if="teacher.avatar" :src="teacher.avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"/>
+        </el-upload>
+      </el-form-item>
 
       <el-form-item>
         <el-button :disabled="saveBtnDisabled" type="primary" @click="saveOrUpdate()">保存</el-button>
@@ -81,6 +92,7 @@ export default {
         })
       })
     },
+
     updateData() {
       teacherApi.updateById(this.teacher).then(response => {
         this.$message.success(response.message)
@@ -89,7 +101,65 @@ export default {
           path: '/teacher'
         })
       })
+    },
+
+    // 文件上传成功的回调函数
+    handleAvatarSuccess(res) {
+      console.log('res', res)
+      if (res.success) {
+        this.teacher.avatar = res.data.url
+
+        // 强制重新渲染
+        this.$forceUpdate()
+      } else {
+        this.$message.error('上传失败(业务失败)')
+      }
+    },
+
+    // 错误处理
+    handleAvatarError() {
+      console.log('error')
+      this.$message.error('上传失败（http失败）')
+    },
+
+    // 文件上传前的格式和大小的校验
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg' // MIME类型
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
     }
   }
 }
 </script>
+
+<style scoped>
+  .avatar-uploader .avatar-uploader-icon {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar-uploader .avatar-uploader-icon:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader img {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+</style>

@@ -48,11 +48,12 @@
       <el-table-column prop="intro" label="简介" />
       <el-table-column prop="sort" label="排序" width="60" />
       <el-table-column prop="joinDate" label="入驻时间" width="160" />
-      <el-table-column label="操作" width="90">
+      <el-table-column label="操作" width="180">
         <template slot-scope="scope">
           <router-link :to="'/teacher/edit/'+scope.row.id">
             <el-button type="primary" size="mini" icon="el-icon-edit">修改</el-button>
           </router-link>
+          <el-button type="danger" size="mini" icon="el-icon-delete" @click="removeById(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
 
@@ -97,6 +98,22 @@ export default {
 
   // 定义方法
   methods: {
+    // 根据讲师id删除讲师
+    removeById(id) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '好',
+        cancelButtonText: '算了',
+        type: 'warning'
+      }).then(() => {
+        teacherApi.removeById(id).then(response => {
+          this.$message.success(response.message)
+          this.fetchData()
+        })
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
+    },
+
     // 清空表单
     resetData() {
       this.searchObj = {}

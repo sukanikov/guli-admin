@@ -34,5 +34,11 @@ export default{
       method: 'put',
       data: teacher
     })
+  },
+  removeById(id) {
+    return request({
+      url: `/admin/edu/teacher/remove/${id}`,
+      method: 'delete'
+    })
   }
 }

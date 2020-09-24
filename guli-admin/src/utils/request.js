@@ -60,6 +60,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.log('http失败')
     console.log('err' + error) // for debug
     Message({
       message: error.message,
