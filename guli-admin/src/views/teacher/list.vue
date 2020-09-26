@@ -30,9 +30,18 @@
         <el-button type="default" @click="resetData()">清空</el-button>
       </el-form-item>
     </el-form>
-
+    <!-- 工具按钮 -->
+    <div style="margin-bottom: 10px">
+      <el-button type="danger" size="mini" @click="batchRemove()">批量删除</el-button>
+    </div>
     <!-- 表格 -->
-    <el-table :data="list" border stripe>
+    <el-table
+      :data="list"
+      :header-cell-style="{background:'#eef1f6',color:'#606266'}"
+      border
+      stripe
+      @selection-change="handleSelectionChange" >
+      <el-table-column type="selection"/>
       <el-table-column type="index" width="50">
         <template slot-scope="scope">
           {{ (page - 1) * limit + scope.$index + 1 }}
@@ -55,6 +64,7 @@
           </router-link>
           <el-button type="danger" size="mini" icon="el-icon-delete" @click="removeById(scope.row.id)">删除</el-button>
         </template>
+
       </el-table-column>
 
     </el-table>
@@ -87,7 +97,9 @@ export default {
       limit: 5, // 每页记录数
       total: 0, // 总数
 
-      searchObj: {}
+      searchObj: {},
+      multipleSelection: []
+
     }
   },
 
@@ -98,6 +110,7 @@ export default {
 
   // 定义方法
   methods: {
+
     // 根据讲师id删除讲师
     removeById(id) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -113,7 +126,6 @@ export default {
         this.$message.info('已取消删除')
       })
     },
-
     // 清空表单
     resetData() {
       this.searchObj = {}
@@ -140,6 +152,34 @@ export default {
         this.list = response.data.pageModel.records
         this.total = response.data.pageModel.total
       })
+    },
+    // 批量删除
+    batchRemove() {
+      if (this.multipleSelection.length === 0) {
+        this.$message.warning('请选择要删除的元素')
+        return
+      }
+      this.$confirm('此操作将永久删除选中的记录, 是否继续?', '提示', {
+        confirmButtonText: '好',
+        cancelButtonText: '算了',
+        type: 'warning'
+      }).then(() => { // 获取选中的元素id，再赋给batchRemove
+        const idList = []
+        this.multipleSelection.forEach(item => {
+          idList.push(item.id)
+        })
+        return teacherApi.batchRemove(idList)
+      }).then(response => {
+        this.$message.success(response.message)
+        this.fetchData() // 删除后重新刷新页面，防止源数据仍存留在页面
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
+    },
+    // 监听表格复选框的选中状态，获取被选中的数据
+    handleSelectionChange(val) {
+      this.multipleSelection = val // 放在this中表示mutipleSelection要注册到data中
+      console.log(this.multipleSelection)
     }
   }
 }

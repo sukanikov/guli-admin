@@ -40,5 +40,12 @@ export default{
       url: `/admin/edu/teacher/remove/${id}`,
       method: 'delete'
     })
+  },
+  batchRemove(idList) {
+    return request({
+      url: '/admin/edu/teacher/batch-remove',
+      method: 'delete',
+      data: idList
+    })
   }
 }

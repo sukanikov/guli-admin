@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- 输入表单 -->
+    <!-- 添加/更新表单 -->
     <el-form label-width="120px">
       <el-form-item label="讲师名称">
         <el-input v-model="teacher.name" />
