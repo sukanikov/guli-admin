@@ -37,32 +37,54 @@ export const constantRouterMap = [
     }]
   },
 
-  // 讲师的管理
+  // 讲师管理
   {
     path: '/teacher',
     component: Layout,
     redirect: '/teacher/list',
     name: 'Teacher',
-    meta: { title: '讲师管理' },
+    meta: { title: '讲师管理', icon: 'peoples' },
     children: [
       {
         path: 'list',
         name: 'TeacherList',
         component: () => import('@/views/teacher/list'),
-        meta: { title: '讲师列表', icon: 'guide' }
+        meta: { title: '讲师列表', icon: 'user' }
       },
       {
         path: 'create',
         name: 'TeacherCreate',
         component: () => import('@/views/teacher/form'),
-        meta: { title: '添加讲师', icon: 'guide' }
+        meta: { title: '添加讲师', icon: 'user' }
       },
       {
         path: 'edit/:id',
         name: 'TeacherEdit',
         component: () => import('@/views/teacher/form'),
-        meta: { title: '编辑讲师' },
+        meta: { title: '编辑讲师', icon: 'edit' },
         hidden: true
+      }
+    ]
+  },
+  // 课程分类管理
+  {
+    path: '/subject',
+    component: Layout,
+    redirect: '/subject/list',
+    name: 'Subject',
+    meta: { title: '课程分类管理', icon: 'tree' },
+    children: [
+      {
+        path: 'list',
+        name: 'SubjectList',
+        component: () => import('@/views/subject/list'),
+        meta: { title: '课程分类列表', icon: 'nested' }
+      },
+      {
+        path: 'import',
+        name: 'SubjectImport',
+        component: () => import('@/views/subject/import'),
+        meta: { title: '导入课程分类', icon: 'documentation' }
       }
     ]
   },

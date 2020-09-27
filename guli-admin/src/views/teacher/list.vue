@@ -3,7 +3,16 @@
     <!--查询表单-->
     <el-form :inline="true">
       <el-form-item>
-        <el-input v-model="searchObj.name" placeholder="讲师"/>
+        <!-- <el-input v-model="searchObj.name" placeholder="讲师"/> -->
+        <el-autocomplete
+          v-model="searchObj.name"
+          :value-key="'name'"
+          :fetch-suggestions="querySearch"
+          :trigger-on-focus="false"
+          class="inline-input"
+          placeholder="讲师姓名"
+          @select="handleSelect"
+        />
       </el-form-item>
 
       <el-form-item>
@@ -98,8 +107,8 @@ export default {
       total: 0, // 总数
 
       searchObj: {},
-      multipleSelection: []
-
+      multipleSelection: [],
+      nameList: []
     }
   },
 
@@ -107,10 +116,17 @@ export default {
   created() {
     this.fetchData()
   },
-
+  mounted() {
+    this.loadAll() // 初始化时一次性获取所有姓名列表，而且这是异步方法获取值
+  },
   // 定义方法
   methods: {
 
+    loadAll() {
+      teacherApi.selectNameListByKey().then(response => {
+        this.nameList = response.data.nameList
+      })
+    },
     // 根据讲师id删除讲师
     removeById(id) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -180,6 +196,24 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val // 放在this中表示mutipleSelection要注册到data中
       console.log(this.multipleSelection)
+    },
+    // 获取搜索建议列表
+    querySearch(queryString, cb) {
+      debugger
+      var nameList = this.nameList
+      var results = queryString ? nameList.filter(this.createFilter(queryString)) : nameList
+      // console.log(results)
+      // 调用 callback 返回建议列表的数据
+      cb(results) // 不返回结果的原因是输入建议对象中用于显示的键名默认是value，而不是我们定义的name，需要在前面设置
+    },
+    // 根据输入返回一个函数的引用
+    createFilter(queryString) {
+      return (nameObj) => {
+        return (nameObj.name.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+      }
+    },
+    handleSelect(item) {
+      console.log(item)
     }
   }
 }
