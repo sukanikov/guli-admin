@@ -94,7 +94,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/course/list',
     name: 'Course',
-    meta: { title: '课程管理' },
+    meta: { title: '课程管理', icon: 'guide 2' },
     children: [
       {
         path: 'list',
@@ -103,10 +103,24 @@ export const constantRouterMap = [
         meta: { title: '课程列表', icon: 'guide' }
       },
       {
-        path: 'form',
-        name: 'CourseForm',
+        path: 'info',
+        name: 'CourseInfo',
         component: () => import('@/views/course/form'),
-        meta: { title: '新增课程', icon: 'guide' }
+        meta: { title: '发布课程', icon: 'guide' }
+      },
+      {
+        path: 'info/:id',
+        name: 'CourseInfoEdit',
+        component: () => import('@/views/course/form'),
+        meta: { title: '编辑课程' },
+        hidden: true
+      },
+      {
+        path: 'chapter/:id',
+        name: 'CourseChapterEdit',
+        component: () => import('@/views/course/form'),
+        meta: { title: '编辑大纲' },
+        hidden: true
       }
     ]
   },
