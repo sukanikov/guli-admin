@@ -12,7 +12,7 @@
         <p>
           {{ chapter.title }}
           <span class="acts">
-            <el-button type="text">添加课时</el-button>
+            <el-button type="text" @click="addVideo(chapter.id)">添加课时</el-button>
             <el-button type="text" @click="editChapter(chapter.id)">编辑</el-button>
             <el-button type="text" @click="removeChapterById(chapter.id)">删除</el-button>
           </span>
@@ -29,8 +29,8 @@
               </el-tag>
               <span class="acts">
                 <el-tag v-if="video.free" size="mini" type="success">{{ '免费观看' }}</el-tag>
-                <el-button type="text">编辑</el-button>
-                <el-button type="text">删除</el-button>
+                <el-button type="text" @click="editVideo(chapter.id, video.id)">编辑</el-button>
+                <el-button type="text" @click="removeVideoById(video.id)">删除</el-button>
               </span>
             </p>
           </li>
@@ -40,7 +40,8 @@
 
     <!-- 章节表单对话框 -->
     <chapter-form ref="chapterForm" />
-    <!-- 课时表单对话框 TODO -->
+    <!-- 课时表单对话框 -->
+    <video-form ref="videoForm" />
 
     <div style="text-align:center">
       <el-button type="primary" @click="prev()">上一步</el-button>
@@ -53,8 +54,11 @@
 <script>
 import chapterApi from '@/api/chapter'
 import ChapterForm from '@/views/course/components/Chapter/Form'
+import VideoForm from '@/views/course/components/Video/Form'
+import videoApi from '@/api/video'
+
 export default {
-  components: { ChapterForm },
+  components: { ChapterForm, VideoForm },
 
   data() {
     return {
@@ -77,6 +81,16 @@ export default {
       this.$refs.chapterForm.open(chapterId)
     },
 
+    // 添加课时
+    addVideo(chapterId) {
+      this.$refs.videoForm.open(chapterId)
+    },
+
+    // 编辑课时
+    editVideo(chapterId, videoId) {
+      this.$refs.videoForm.open(chapterId, videoId)
+    },
+
     // 获取章节列表
     fetchNodeList() {
       chapterApi.getNestedTreeList(this.$parent.courseId).then(response => {
@@ -91,6 +105,23 @@ export default {
         type: 'warning'
       }).then(() => {
         return chapterApi.removeById(chapterId)
+      }).then(response => {
+        this.fetchNodeList()
+        this.$message.success(response.message)
+      }).catch((response) => {
+        if (response === 'cancel') {
+          this.$message.info('取消删除')
+        }
+      })
+    },
+
+    removeVideoById(videoId) {
+      this.$confirm('此操作将永久删除该课时, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        return videoApi.removeById(videoId)
       }).then(response => {
         this.fetchNodeList()
         this.$message.success(response.message)
