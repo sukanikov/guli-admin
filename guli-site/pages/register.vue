@@ -49,7 +49,7 @@
             @click="submitRegister()">
         </div>
         <p class="sign-up-msg">
-          点击 “注册” 即表示您同意并愿意遵守简书
+          点击 “注册” 即表示您同意并愿意遵守谷粒学院
           <br>
           <a target="_blank" href="http://www.jianshu.com/p/c44d171298ce">用户协议</a>
           和
@@ -71,6 +71,7 @@
 <script>
 import '~/assets/css/sign.css'
 import '~/assets/css/iconfont.css'
+import registerApi from '~/api/register'
 
 export default {
   layout: 'sign',
@@ -90,17 +91,39 @@ export default {
   methods: {
     // 获取验证码
     getCodeFun() {
+      if (this.sending) { return }
+      this.sending = true
 
+      // 获取验证码
+      registerApi.sendMessage(this.member.mobile).then(response => {
+        this.timeDown()
+        this.$message.success(response.message)
+      })
     },
 
     // 倒计时
     timeDown() {
-
+      const timmer = setInterval(() => {
+        this.codeText = this.second
+        this.second--
+        if (this.second < 0) {
+          // 停止定时器
+          clearInterval(timmer)
+          this.second = 60
+          this.codeText = '获取验证码'
+          this.sending = false
+        }
+      }, 1000)
     },
 
     // 注册
     submitRegister() {
-
+      registerApi.register(this.member).then(response => {
+        this.$message.success(response.message)
+        // 注册成功后跳转到登录页
+        this.$router.push({ path: '/login' })
+      // window.location.href = '/login'
+      })
     }
   }
 }

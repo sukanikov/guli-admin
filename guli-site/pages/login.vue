@@ -45,6 +45,8 @@
 <script>
 import '~/assets/css/sign.css'
 import '~/assets/css/iconfont.css'
+import loginApi from '~/api/login'
+import cookie from 'js-cookie'
 
 export default {
   layout: 'sign',
@@ -61,7 +63,16 @@ export default {
   methods: {
     // 登录
     submitLogin() {
+      loginApi.submitLogin(this.user).then(response => {
+        // 将jwt存入cookie
+        cookie.set('guli_token', response.data.token, {
+          domain: 'localhost',
+          expires: 1
+        })
 
+        // 跳转到主页面
+        window.location.href = '/'
+      })
     }
   }
 }
