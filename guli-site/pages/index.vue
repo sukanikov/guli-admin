@@ -4,14 +4,13 @@
     <!-- 幻灯片 开始 -->
     <div v-swiper:mySwiper="swiperOption">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" style="background: #040B1B;">
+        <div
+          v-for="topBannerAd in topBannerAdList"
+          :key="topBannerAd.id"
+          :style="'background:' + topBannerAd.color"
+          class="swiper-slide">
           <a target="_blank" href="/">
-            <img src="~/assets/photo/banner/1525939573202.jpg" alt="首页banner">
-          </a>
-        </div>
-        <div class="swiper-slide" style="background: #040B1B;">
-          <a target="_blank" href="/">
-            <img src="~/assets/photo/banner/1525939573202.jpg" alt="首页banner">
+            <img :src="topBannerAd.imageUrl" :alt="topBannerAd.title">
           </a>
         </div>
       </div>
@@ -337,7 +336,14 @@
 </template>
 
 <script>
+import indexApi from '~/api/index'
 export default {
+  async asyncData() {
+    const response = await indexApi.getTopBannerAdList()
+    return {
+      topBannerAdList: response.data.items
+    }
+  },
 
   data() {
     return {
